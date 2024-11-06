@@ -1,46 +1,67 @@
 import { Request, Response } from "express";
 import User from "../models/user";
 
-export const createCurrentUserr = async(req: Request, res: Response):Promise<any> =>{
-try{
-    const {auth0Id} = req.body;
-    const existingUser = await User.findOne({auth0Id})
-    if(existingUser){
-        return res.status(200).send();
+export const createCurrentUserr = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const { auth0Id } = req.body;
+    const existingUser = await User.findOne({ auth0Id });
+    if (existingUser) {
+      return res.status(200).send();
     }
     const newUser = new User(req.body);
     await newUser.save();
-    res.status(201).json(newUser.toObject())
+    res.status(201).json(newUser.toObject());
     return;
-
-
-}catch(error){
+  } catch (error) {
     console.log(error);
-    res.status(500).json({message: "Error creating user"})
+    res.status(500).json({ message: "Error creating user" });
     return;
-}
-}
+  }
+};
 
-export const updateCurrentUser = async(req: Request, res: Response)=>{
-    try{
+export const updateCurrentUser = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const { name, addressLine1, country, city } = req.body;
+    const user = await User.findById(req.userId);
 
-        const{name, addressLine1, country, city} = req.body;
-        const user = await User.findById(req.userId);
-
-        if(!user){
-            res.status(404).json({message: "User not found"})
-        }
-
-        user!.name = name;
-        user!.addressLine1 = addressLine1;
-        user!.city = city;
-        user!.country = country;
-
-        await user!.save();
-
-        res.send(user);
-    }catch(error){
-        console.log(error);
-        res.status(500).json({message: "Error updaing User"});
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-}
+
+    user.name = name;
+    user.addressLine1 = addressLine1;
+    user.city = city;
+    user.country = country;
+
+    await user.save();
+
+    res.send(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error updating user" });
+  }
+};
+
+export const getCurrentUser = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const currentUser = await User.findById({ _id: req.userId });
+    if (!currentUser) {
+      return res.status(404).json({ message: " Something Went Wrong" });
+    }
+    res.json(currentUser);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: " Something Went wrong in GetCurrentUser API" });
+  }
+};

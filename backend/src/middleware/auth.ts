@@ -31,7 +31,6 @@ export const jwtParse = async (
     return res.sendStatus(401);
   }
 
-  // Bearer lshdflshdjkhvjkshdjkvh34h5k3h54jkh
   const token = authorization.split(" ")[1];
 
   try {
@@ -48,6 +47,7 @@ export const jwtParse = async (
     req.userId = user._id.toString();
     next();
   } catch (error) {
+    console.log(error);
     return res.sendStatus(401);
   }
 };
