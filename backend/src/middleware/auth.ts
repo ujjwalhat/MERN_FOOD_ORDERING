@@ -1,7 +1,7 @@
 import { auth } from "express-oauth2-jwt-bearer";
-import { NextFunction,Request,Response } from "express";
-import jwt from 'jsonwebtoken'
-import User from '../models/user';
+import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import User from "../models/user";
 
 declare global {
   namespace Express {
@@ -18,13 +18,11 @@ export const jwtCheck = auth({
   tokenSigningAlg: "RS256",
 });
 
-
-
 export const jwtParse = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<any> =>{
+): Promise<any> => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
